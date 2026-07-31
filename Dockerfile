@@ -1,20 +1,18 @@
-# 1. On utilise une image Node.js stable et légère
 FROM node:20-alpine
 
-# 2. On définit le dossier de travail dans le conteneur
 WORKDIR /app
 
-# 3. On copie uniquement les fichiers de configuration pour installer les dépendances de manière optimisée
+# Copier les fichiers de gestion des dépendances
 COPY package*.json ./
 
-# 4. On installe les dépendances du projet
+# Installer les dépendances en production
 RUN npm install
 
-# 5. On copie le reste du code de notre projet
+# Copier tout le code source dans le conteneur
 COPY . .
 
-# 6. On expose le port par défaut de Vite (5173)
-EXPOSE 5173
+# Exposer le port de l'API
+EXPOSE 5000
 
-# 7. Commande pour lancer le projet en mode développement avec Vite
-CMD ["npm", "run", "dev", "--", "--host"]
+# Lancer le serveur Node.js
+CMD ["node", "server.js"]qF

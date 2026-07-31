@@ -1,18 +1,49 @@
-# Version de la syntaxe Docker Compose
-version: '3.8'
-
 services:
-  # On définit notre service web ( application React)
   web:
-    # construire l'image à partir du Dockerfile 
     build: .
-    # On relie le port PC au port du conteneur
+    restart: unless-stopped
     ports:
       - "5173:5173"
-    #  volumes permettent synchroniser code en temps réel
     volumes:
       - .:/app
       - /app/node_modules
-    # On définit les variables d'environnement 
     environment:
-      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    env_file:
+      - ./api/.env
+    depends_on:
+      - db-sql
+      - db-nosql
+
+  db-sql:
+    image: mysql:8
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: gamerent_db
+    volumes:
+      - ./api/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-sql-data:/var/lib/mysql
+
+  db-nosql:
+    image: mongo:7
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-nosql-data:/data/db
+
+volumes:
+  db-sql-data:
+  db-nosql-data:

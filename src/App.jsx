@@ -1,11 +1,25 @@
-// src/App.jsx
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Catalogue from './pages/Catalogue';
+import Tarifs from './pages/Tarifs';
+import Contact from './pages/Contact';
+import './index.css';
 
-// Composant principal de notre application
 function App() {
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Mon Projet DWWM 🚀</h1>
-      <p>L'environnement Docker fonctionne. Prêt à coder !</p>
+    <div className="app-wrapper">
+      <Header />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/catalogue" element={<Catalogue />} />
+        <Route path="/tarifs" element={<Tarifs />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+
+      <Footer />
     </div>
   );
 }
