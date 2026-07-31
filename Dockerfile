@@ -1,18 +1,17 @@
-FROM node:20-alpine
-
+# Étape 1 : Build de l'application React
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Copier les fichiers de gestion des dépendances
 COPY package*.json ./
-
-# Installer les dépendances en production
 RUN npm install
-
-# Copier tout le code source dans le conteneur
 COPY . .
+RUN npm run build
 
-# Exposer le port de l'API
-EXPOSE 5000
+# Étape 2 : Servir l'application avec un serveur statique
+FROM node:20-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=builder /app/dist ./dist
 
-# Lancer le serveur Node.js
-CMD ["node", "server.js"]qF
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
